@@ -34,7 +34,7 @@ cd mac-utilities
 bash scripts/build-app.sh
 ```
 
-This compiles, signs, installs `MacUtilities.app` to `~/Applications`, and starts it as a login agent.
+This compiles, signs, installs `MacUtilities.app` to `~/Applications`, and starts it as a login agent. On the first run it also creates a **stable, per-machine self-signed signing identity** (via `scripts/setup-signing.sh`) so the Accessibility permission you grant survives every future rebuild — no re-granting.
 
 **Final step — grant one permission:**
 
@@ -65,8 +65,9 @@ Then remove `MacUtilities` from **System Settings → Privacy & Security → Acc
 ## Project layout
 
 ```
-src/mac-utilities.swift    # the unified daemon (all features live here)
-scripts/build-app.sh       # build + sign + install
+src/mac-utilities.swift    # the unified app: engine + menu bar UI
+scripts/build-app.sh       # build + sign + install  (also: uninstall)
+scripts/setup-signing.sh   # create a stable self-signed identity (auto-run)
 assets/                    # icon source (make-icon.swift) + AppIcon.icns
 ```
 

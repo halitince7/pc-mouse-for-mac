@@ -85,11 +85,25 @@ EOL
 echo "APPL????" > "$APP_DIR/Contents/PkgInfo"
 ok "Info.plist written"
 
-# --- 5. Ad-hoc signature ---
+# --- 5. Code signature ---
+# Prefer a STABLE self-signed identity so the Accessibility permission survives
+# rebuilds. Falls back to ad-hoc if the identity can't be created.
 # (For distribution later: codesign --sign "Developer ID Application: ...")
-info "Signing (ad-hoc)..."
-codesign --force --deep --sign - --identifier "$BUNDLE_ID" "$APP_DIR" 2>/dev/null \
-    && ok "Signed" || warn "Signing skipped"
+SIGN_IDENTITY="MacUtilities Self-Signed"
+if ! security find-identity 2>/dev/null | grep -q "$SIGN_IDENTITY"; then
+    info "Setting up stable signing identity (first run)..."
+    bash "$SCRIPT_DIR/setup-signing.sh" || warn "Could not create signing identity — using ad-hoc"
+fi
+
+if security find-identity 2>/dev/null | grep -q "$SIGN_IDENTITY"; then
+    info "Signing with '$SIGN_IDENTITY'..."
+    codesign --force --deep --sign "$SIGN_IDENTITY" --identifier "$BUNDLE_ID" "$APP_DIR" 2>/dev/null \
+        && ok "Signed (stable identity)" || warn "Signing failed"
+else
+    info "Signing (ad-hoc fallback)..."
+    codesign --force --deep --sign - --identifier "$BUNDLE_ID" "$APP_DIR" 2>/dev/null \
+        && ok "Signed (ad-hoc)" || warn "Signing skipped"
+fi
 
 # --- 6. Install (~/Applications) ---
 info "Installing: $INSTALLED_APP"
