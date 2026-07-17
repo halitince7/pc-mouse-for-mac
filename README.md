@@ -45,10 +45,26 @@ This compiles, signs, installs `MacUtilities.app` to `~/Applications`, and start
 
 It starts working immediately after you flip the switch. It also launches automatically on every login.
 
+## Control panel
+
+Mac Utilities lives in the **menu bar** (no Dock icon, no window clutter). Click
+the mouse icon to open a small, modern SwiftUI panel:
+
+- **Header** — app icon, name, and version.
+- **Permission banner** — appears only when Accessibility isn't granted yet,
+  with a one-click **Open** button that jumps straight to the right Settings pane.
+- **Feature rows** — one per feature (Desktop Switcher, ScrollFix), each with an
+  icon, a short description, and a **toggle switch**. Flipping a switch takes
+  effect instantly; your choices persist across restarts.
+- **Footer** — a shortcut to the Accessibility settings and a **Quit** button.
+
+> 💡 The panel is only for control. The features keep working in the background
+> whether or not the panel is open.
+
 ## Usage
 
-Click the **mouse icon in the menu bar** to open the control panel — a small
-modern UI where you can toggle each feature, see the permission status, and quit.
+Click the **mouse icon in the menu bar** to open the control panel — toggle each
+feature, see the permission status, and quit from there.
 
 - **Switch desktops:** hold **Ctrl** and scroll the mouse wheel up / down.
 - **Scroll direction:** your mouse scrolls the traditional way while the trackpad
