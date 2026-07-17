@@ -11,9 +11,9 @@
 | Feature | What it does |
 |---|---|
 | **Desktop Switcher** | Switch between desktops with **Ctrl + Scroll Wheel** — perfect for a traditional PC mouse. |
-| **ScrollFix** | Independent scroll directions: the mouse scrolls traditionally while the trackpad stays natural. (Keep **Natural Scrolling ON** in System Settings.) |
+| **ScrollFix** | Independent scroll directions: the mouse scrolls traditionally while the trackpad stays natural — **works no matter how your system Natural Scrolling is set**. |
 
-Everything runs inside **one** background app (`MacUtilities.app`). Adding a new feature later needs **no new permission** — it's all one process.
+Toggle each feature on/off from the **menu bar** icon. Everything runs inside **one** background app (`MacUtilities.app`); adding a new feature later needs **no new permission** — it's all one process.
 
 ## Why one app?
 
@@ -44,15 +44,20 @@ It starts working immediately after you flip the switch. It also launches automa
 
 ## Usage
 
+Click the **mouse icon in the menu bar** to open the control panel — a small
+modern UI where you can toggle each feature, see the permission status, and quit.
+
 - **Switch desktops:** hold **Ctrl** and scroll the mouse wheel up / down.
-- **Mouse scroll direction:** with macOS *Natural Scrolling* ON, your mouse now scrolls the traditional way while the trackpad stays natural.
+- **Scroll direction:** your mouse scrolls the traditional way while the trackpad
+  stays natural. This holds whether macOS *Natural Scrolling* is ON or OFF — the
+  app reads the system setting and adjusts automatically.
+- Clicking `MacUtilities.app` again (from Finder / Launchpad) just re-opens the
+  menu-bar panel; it never launches a second copy.
 
 ## Uninstall
 
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.mathatinlabs.macutilities.plist
-rm -f ~/Library/LaunchAgents/com.mathatinlabs.macutilities.plist
-rm -rf ~/Applications/MacUtilities.app
+bash scripts/build-app.sh uninstall
 ```
 
 Then remove `MacUtilities` from **System Settings → Privacy & Security → Accessibility**.

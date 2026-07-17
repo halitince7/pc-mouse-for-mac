@@ -29,6 +29,18 @@ info()  { echo -e "${BLUE}ℹ $1${NC}"; }
 ok()    { echo -e "${GREEN}✓ $1${NC}"; }
 warn()  { echo -e "${YEL}⚠ $1${NC}"; }
 
+# --- Uninstall ---
+if [[ "$1" == "uninstall" || "$1" == "--uninstall" ]]; then
+    info "Uninstalling MacUtilities..."
+    launchctl unload "$PLIST" 2>/dev/null || true
+    rm -f "$PLIST"          && ok "Removed launch agent"
+    rm -rf "$INSTALLED_APP" && ok "Removed $INSTALLED_APP"
+    echo
+    info "Also remove 'MacUtilities' from:"
+    echo "  System Settings → Privacy & Security → Accessibility"
+    exit 0
+fi
+
 command -v swiftc >/dev/null || { echo "swiftc not found: xcode-select --install"; exit 1; }
 
 # --- 1. Bundle skeleton ---
@@ -39,7 +51,7 @@ mkdir -p "$MACOS_DIR" "$RES_DIR"
 # --- 2. Compile ---
 info "Compiling..."
 swiftc -O -o "$MACOS_DIR/$APP_NAME" "$SRC" \
-    -framework Cocoa -framework Foundation
+    -framework Cocoa -framework SwiftUI -framework Foundation
 ok "Compiled"
 
 # --- 3. Icon ---
