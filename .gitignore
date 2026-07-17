@@ -66,6 +66,8 @@ build/
 *.app
 *binary
 
+# macOS
+.DS_Store
+
 # Compiled binaries
-desktop-switcher
-scrollfix
+MacUtilities
