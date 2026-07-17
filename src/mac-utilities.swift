@@ -5,16 +5,16 @@ import Foundation
 
 // MARK: - Unified Mac Utilities daemon
 //
-// Tek process, tek izin (Accessibility). İçinde birden fazla özellik barındırır:
-//   1. Desktop Switcher : Ctrl + scroll -> masaüstü değiştir
-//   2. ScrollFix        : fare scroll'unu ters çevir (trackpad doğal kalır)
+// Single process, single permission (Accessibility). Hosts multiple features:
+//   1. Desktop Switcher : Ctrl + scroll -> switch desktop
+//   2. ScrollFix        : invert mouse scroll (trackpad stays natural)
 //
-// Yeni özellikler eklemek için aşağıya yeni bir "feature" davranışı eklemen
-// yeterli; ayrı bir binary / ayrı bir izin gerekmez.
+// To add a new feature, just add its behavior below; no separate binary and
+// no additional permission are needed.
 
 final class MacUtilities: NSObject {
 
-    // MARK: Desktop switcher durumu
+    // MARK: Desktop switcher state
     private var ctrlPressed = false
     private var lastScrollTime: TimeInterval = 0
     private let scrollCooldown: TimeInterval = 0.2
@@ -23,20 +23,21 @@ final class MacUtilities: NSObject {
     private var eventTap: CFMachPort?
     private var retryTimer: Timer?
 
-    // MARK: - Başlangıç
+    // MARK: - Startup
     func start() {
-        // İzni bir kez iste (varsa hemen geçer). Eksikse KENDİNİ KAPATMA —
-        // bu, eski "terminate + KeepAlive" sonsuz izin döngüsünü önler.
+        // Ask for the permission once (passes immediately if already granted).
+        // Do NOT terminate when it is missing — this avoids the old
+        // "terminate + KeepAlive" infinite permission-prompt loop.
         let options = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true]
         _ = AXIsProcessTrustedWithOptions(options as CFDictionary)
 
         setupTapIfPossible()
 
-        // İzin henüz yoksa: yeniden SORMADAN periyodik olarak dene.
+        // If permission is not granted yet: retry periodically WITHOUT re-prompting.
         if eventTap == nil {
             retryTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
-                guard AXIsProcessTrusted() else { return }   // sessizce bekle
+                guard AXIsProcessTrusted() else { return }   // wait silently
                 self.setupTapIfPossible()
                 if self.eventTap != nil {
                     self.retryTimer?.invalidate()
@@ -49,7 +50,7 @@ final class MacUtilities: NSObject {
         setupSignalHandler()
     }
 
-    // MARK: - Event tap kurulumu
+    // MARK: - Event tap setup
     private func setupTapIfPossible() {
         guard eventTap == nil else { return }
         guard AXIsProcessTrusted() else { return }
@@ -79,23 +80,23 @@ final class MacUtilities: NSObject {
         CGEvent.tapEnable(tap: tap, enable: true)
     }
 
-    // MARK: - Event yönlendirme
+    // MARK: - Event dispatch
     private func handleEvent(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         switch type {
         case .flagsChanged:
             ctrlPressed = event.flags.contains(.maskControl)
 
         case .scrollWheel:
-            // Öncelik: Ctrl basılıysa masaüstü değiştir, olayı yut.
+            // Priority: if Ctrl is held, switch desktop and consume the event.
             if ctrlPressed {
                 handleDesktopSwitch(event)
                 return nil
             }
-            // Aksi halde: ScrollFix (fareyse ters çevir).
+            // Otherwise: ScrollFix (invert if it's a mouse).
             applyScrollFix(event)
 
         case .tapDisabledByTimeout, .tapDisabledByUserInput:
-            // Sistem tap'i devre dışı bırakırsa yeniden etkinleştir.
+            // Re-enable the tap if the system disables it.
             if let tap = eventTap { CGEvent.tapEnable(tap: tap, enable: true) }
 
         default:
@@ -118,7 +119,7 @@ final class MacUtilities: NSObject {
     }
 
     private func switchDesktop(direction: Direction) {
-        let keyCode: CGKeyCode = direction == .left ? 123 : 124 // Sol / Sağ ok
+        let keyCode: CGKeyCode = direction == .left ? 123 : 124 // Left / Right arrow
         guard let src = CGEventSource(stateID: .hidSystemState) else { return }
         if let down = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: true),
            let up   = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: false) {
@@ -131,13 +132,13 @@ final class MacUtilities: NSObject {
     }
 
     // MARK: - Feature 2: ScrollFix
-    // Natural Scrolling sistemde AÇIK varsayımı: trackpad doğal kalsın,
-    // klasik fare tekerleği ters çevrilsin. Kaynak ayrımı için scroll olayının
-    // "continuous" alanı kullanılır (çentikli fare = false, trackpad = true) —
-    // böylece Input Monitoring iznine gerek kalmaz.
+    // Assumes macOS Natural Scrolling is ON: keep the trackpad natural and
+    // invert the classic mouse wheel. The source is distinguished via the
+    // scroll event's "continuous" field (notched mouse = false, trackpad =
+    // true) — so no Input Monitoring permission is required.
     private func applyScrollFix(_ event: CGEvent) {
         let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
-        guard !isContinuous else { return } // trackpad: dokunma
+        guard !isContinuous else { return } // trackpad: leave untouched
 
         let dY = event.getIntegerValueField(.scrollWheelEventDeltaAxis1)
         let dX = event.getIntegerValueField(.scrollWheelEventDeltaAxis2)
@@ -145,14 +146,14 @@ final class MacUtilities: NSObject {
         event.setIntegerValueField(.scrollWheelEventDeltaAxis2, value: -dX)
     }
 
-    // MARK: - Sinyaller
+    // MARK: - Signals
     private func setupSignalHandler() {
         signal(SIGINT)  { _ in NSApp.terminate(nil) }
         signal(SIGTERM) { _ in NSApp.terminate(nil) }
     }
 }
 
-// MARK: - Giriş noktası
+// MARK: - Entry point
 final class MacUtilitiesApp: NSApplication {
     let utilities = MacUtilities()
     override func run() {
@@ -162,5 +163,5 @@ final class MacUtilitiesApp: NSApplication {
 }
 
 let app = MacUtilitiesApp.shared
-app.setActivationPolicy(.accessory) // Dock'ta görünme
+app.setActivationPolicy(.accessory) // Hide from the Dock
 app.run()

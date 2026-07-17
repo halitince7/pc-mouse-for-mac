@@ -1,7 +1,7 @@
 #!/usr/bin/swift
 
-// MacUtilities uygulama ikonunu üretir (1024x1024 PNG).
-// Kullanım: swift make-icon.swift <cikti.png>
+// Generates the MacUtilities app icon (1024x1024 PNG).
+// Usage: swift make-icon.swift <output.png>
 
 import Cocoa
 
@@ -14,7 +14,7 @@ guard let ctx = NSGraphicsContext.current?.cgContext else {
     fputs("no context\n", stderr); exit(1)
 }
 
-// Arka plan: yuvarlatılmış kare + dikey gradyan (mor -> mavi)
+// Background: rounded square + diagonal gradient (purple -> blue)
 let inset = 80.0
 let rect = CGRect(x: inset, y: inset, width: size - 2*inset, height: size - 2*inset)
 let radius = 200.0
@@ -30,11 +30,11 @@ ctx.drawLinearGradient(gradient,
                        end: CGPoint(x: size, y: 0),
                        options: [])
 
-// Merkez: fare tekerleği + sol/sağ oklar (masaüstü değiştirme + scroll)
+// Center: mouse + left/right arrows (desktop switching + scroll)
 let cx = size / 2, cy = size / 2
 let white = NSColor.white
 
-// Fare gövdesi (yuvarlatılmış dikey kapsül)
+// Mouse body (rounded vertical capsule)
 let bodyW = 260.0, bodyH = 400.0
 let body = NSBezierPath(roundedRect: NSRect(x: cx - bodyW/2, y: cy - bodyH/2, width: bodyW, height: bodyH),
                         xRadius: bodyW/2, yRadius: bodyW/2)
@@ -42,13 +42,13 @@ white.withAlphaComponent(0.95).setStroke()
 body.lineWidth = 34
 body.stroke()
 
-// Scroll tekerleği (üstte küçük dikey çizgi)
+// Scroll wheel (small vertical line near the top)
 let wheel = NSBezierPath(roundedRect: NSRect(x: cx - 14, y: cy + 40, width: 28, height: 110),
                          xRadius: 14, yRadius: 14)
 white.withAlphaComponent(0.95).setFill()
 wheel.fill()
 
-// Sol / sağ chevron oklar (masaüstü geçişi)
+// Left / right chevron arrows (desktop switching)
 func chevron(atX x: Double, pointingLeft: Bool) {
     let p = NSBezierPath()
     let w = 70.0, h = 120.0

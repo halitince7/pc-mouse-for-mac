@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# MacUtilities — birleşik arka plan uygulamasını derler, imzalar, kurar.
-# Tek binary, tek izin (Accessibility). sudo GEREKMEZ.
+# MacUtilities — build, sign, and install the unified background app.
+# Single binary, single permission (Accessibility). No sudo required.
 
 set -e
 
@@ -9,7 +9,7 @@ APP_NAME="MacUtilities"
 BUNDLE_ID="com.mathatinlabs.macutilities"
 VERSION="1.0"
 
-# Kaynak dizini bul (repo kökü)
+# Locate the source directory (repo root)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SRC="$ROOT_DIR/src/mac-utilities.swift"
@@ -29,25 +29,25 @@ info()  { echo -e "${BLUE}ℹ $1${NC}"; }
 ok()    { echo -e "${GREEN}✓ $1${NC}"; }
 warn()  { echo -e "${YEL}⚠ $1${NC}"; }
 
-command -v swiftc >/dev/null || { echo "swiftc yok: xcode-select --install"; exit 1; }
+command -v swiftc >/dev/null || { echo "swiftc not found: xcode-select --install"; exit 1; }
 
-# --- 1. Bundle iskeleti ---
-info "Bundle oluşturuluyor..."
+# --- 1. Bundle skeleton ---
+info "Creating bundle..."
 rm -rf "$BUILD_DIR"
 mkdir -p "$MACOS_DIR" "$RES_DIR"
 
-# --- 2. Derle ---
-info "Derleniyor..."
+# --- 2. Compile ---
+info "Compiling..."
 swiftc -O -o "$MACOS_DIR/$APP_NAME" "$SRC" \
     -framework Cocoa -framework Foundation
-ok "Derlendi"
+ok "Compiled"
 
-# --- 3. İkon ---
+# --- 3. Icon ---
 if [[ -f "$ICON" ]]; then
     cp "$ICON" "$RES_DIR/AppIcon.icns"
-    ok "İkon eklendi"
+    ok "Icon added"
 else
-    warn "İkon bulunamadı ($ICON) — ikonsuz devam"
+    warn "Icon not found ($ICON) — continuing without it"
 fi
 
 # --- 4. Info.plist ---
@@ -71,24 +71,24 @@ cat > "$APP_DIR/Contents/Info.plist" << EOL
 </plist>
 EOL
 echo "APPL????" > "$APP_DIR/Contents/PkgInfo"
-ok "Info.plist yazıldı"
+ok "Info.plist written"
 
-# --- 5. Ad-hoc imza ---
-# (İleride Developer ID: codesign --sign "Developer ID Application: ...")
-info "İmzalanıyor (ad-hoc)..."
+# --- 5. Ad-hoc signature ---
+# (For distribution later: codesign --sign "Developer ID Application: ...")
+info "Signing (ad-hoc)..."
 codesign --force --deep --sign - --identifier "$BUNDLE_ID" "$APP_DIR" 2>/dev/null \
-    && ok "İmzalandı" || warn "İmzalama atlandı"
+    && ok "Signed" || warn "Signing skipped"
 
-# --- 6. Kur (~/Applications) ---
-info "Kuruluyor: $INSTALLED_APP"
+# --- 6. Install (~/Applications) ---
+info "Installing: $INSTALLED_APP"
 mkdir -p "$INSTALL_DIR"
-# Çalışıyorsa durdur
+# Stop it if it is already running
 [[ -f "$PLIST" ]] && launchctl unload "$PLIST" 2>/dev/null || true
 rm -rf "$INSTALLED_APP"
 cp -R "$APP_DIR" "$INSTALLED_APP"
-ok "Kuruldu"
+ok "Installed"
 
-# --- 7. LaunchAgent (tek servis) ---
+# --- 7. LaunchAgent (single service) ---
 cat > "$PLIST" << EOL
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -102,17 +102,17 @@ cat > "$PLIST" << EOL
 </dict>
 </plist>
 EOL
-ok "LaunchAgent oluşturuldu"
+ok "LaunchAgent created"
 
-# --- 8. Başlat ---
+# --- 8. Start ---
 launchctl unload "$PLIST" 2>/dev/null || true
 launchctl load "$PLIST" 2>/dev/null || true
-ok "Servis başlatıldı"
+ok "Service started"
 
 echo
-ok "Tamamlandı!"
+ok "Done!"
 echo
-info "Son adım — TEK izin ver:"
-echo "  System Settings → Privacy & Security → Accessibility → MacUtilities'i AÇ"
+info "Final step — grant ONE permission:"
+echo "  System Settings → Privacy & Security → Accessibility → enable MacUtilities"
 echo
-info "İzni verdiğin an otomatik devreye girer (uygulamayı yeniden başlatmana gerek yok)."
+info "It activates automatically the moment you grant access (no need to relaunch the app)."
