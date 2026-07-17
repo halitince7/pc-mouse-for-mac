@@ -141,4 +141,4 @@ script). Local self-signed builds need none of this.
 
 ## License
 
-Open source — free to use, modify, and distribute.
+[MIT](LICENSE) — free to use, modify, and distribute.
