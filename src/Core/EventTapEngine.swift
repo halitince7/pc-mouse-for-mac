@@ -42,6 +42,8 @@ final class FeatureEngine: NSObject {
 
         let eventMask = (1 << CGEventType.scrollWheel.rawValue)
                       | (1 << CGEventType.flagsChanged.rawValue)
+                      | (1 << CGEventType.otherMouseDown.rawValue)
+                      | (1 << CGEventType.otherMouseUp.rawValue)
 
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -97,6 +99,16 @@ final class FeatureEngine: NSObject {
                 applyScrollFix(event)
             }
 
+        case .otherMouseDown, .otherMouseUp:
+            // Feature 4: Mouse side-button remapping.
+            if settings.mouseButtons {
+                let button = event.getIntegerValueField(.mouseEventButtonNumber)
+                if let action = action(forButton: button), action != .none {
+                    if type == .otherMouseDown { perform(action) }
+                    return nil // consume both down and up so the default doesn't fire
+                }
+            }
+
         case .tapDisabledByTimeout, .tapDisabledByUserInput:
             if let tap = eventTap { CGEvent.tapEnable(tap: tap, enable: true) }
 
@@ -118,7 +130,26 @@ final class FeatureEngine: NSObject {
     }
 
     private func switchDesktop(direction: Direction) {
-        let keyCode: CGKeyCode = direction == .left ? 123 : 124 // Left / Right arrow
+        postControlKey(direction == .left ? 123 : 124) // Ctrl + Left / Right arrow
+    }
+
+    // MARK: Feature 4 — Mouse side-button remapping
+    // Typical mice deliver the thumb buttons as "other" mouse buttons:
+    // 3 = back, 4 = forward.
+    private func action(forButton button: Int64) -> ButtonAction? {
+        switch button {
+        case 3: return settings.backButtonAction
+        case 4: return settings.forwardButtonAction
+        default: return nil
+        }
+    }
+
+    private func perform(_ action: ButtonAction) {
+        if let key = action.key { postControlKey(key) }
+    }
+
+    // MARK: Shared — synthesize a Control + <key> shortcut
+    private func postControlKey(_ keyCode: CGKeyCode) {
         guard let src = CGEventSource(stateID: .hidSystemState) else { return }
         if let down = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: true),
            let up   = CGEvent(keyboardEventSource: src, virtualKey: keyCode, keyDown: false) {

@@ -13,6 +13,7 @@
 | **Desktop Switcher** | Switch between desktops with **Ctrl + Scroll Wheel** — perfect for a traditional PC mouse. |
 | **ScrollFix** | Independent scroll directions: the mouse scrolls traditionally while the trackpad stays natural — **works no matter how your system Natural Scrolling is set**. |
 | **Smooth Scrolling** | Turns the mouse wheel's chunky, line-by-line jumps into an animated pixel glide — much closer to a trackpad. |
+| **Mouse Buttons** | Remap the side (thumb) buttons to Desktop Left/Right, Mission Control, or App Windows — remapping macOS doesn't offer natively. |
 
 Toggle each feature on/off from the **menu bar** icon. Everything runs inside **one** background app (`MacUtilities.app`); adding a new feature later needs **no new permission** — it's all one process.
 
@@ -74,6 +75,9 @@ feature, see the permission status, and quit from there.
 - **Smooth scrolling:** each wheel notch glides instead of jumping. Note this is
   animated smoothing, not trackpad momentum — a wheel has no "release" gesture,
   so there's no inertial flick; rapid notches just accumulate into a longer glide.
+- **Mouse buttons:** enable *Mouse Buttons*, then pick an action for the back and
+  forward (thumb) buttons. Set a button to **None** to leave it untouched — the
+  system default (e.g. browser back/forward) keeps working.
 - Clicking `MacUtilities.app` again (from Finder / Launchpad) just re-opens the
   menu-bar panel; it never launches a second copy.
 
@@ -95,6 +99,7 @@ src/
   Core/PermissionMonitor.swift      # Accessibility trust state (drives UI)
   Core/ScrollDirectionMonitor.swift # reads the system Natural Scrolling setting
   Core/SmoothScroller.swift         # animated pixel-glide for the mouse wheel
+  Core/ButtonAction.swift           # actions a remapped mouse button can trigger
   Core/EventTapEngine.swift         # the CGEvent tap + feature logic
   App/AppDelegate.swift             # menu bar item, popover, single instance
   UI/MenuView.swift                 # SwiftUI control panel

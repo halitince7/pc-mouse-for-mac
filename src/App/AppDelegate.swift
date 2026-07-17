@@ -45,8 +45,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupPopover() {
         popover.behavior = .transient
-        popover.contentSize = NSSize(width: 300, height: 320)
-        popover.contentViewController = NSHostingController(rootView: MenuView())
+        let hosting = NSHostingController(rootView: MenuView())
+        // Auto-size the popover to the SwiftUI content so it grows/shrinks as
+        // rows appear (e.g. the mouse-button mapping pickers). Falls back to a
+        // fixed size on older macOS.
+        if #available(macOS 13.0, *) {
+            hosting.sizingOptions = [.preferredContentSize]
+        } else {
+            popover.contentSize = NSSize(width: 300, height: 420)
+        }
+        popover.contentViewController = hosting
     }
 
     private static func statusBarIcon() -> NSImage {

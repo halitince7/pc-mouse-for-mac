@@ -30,6 +30,20 @@ struct MenuView: View {
                     title: "Smooth Scrolling",
                     subtitle: "Glide the mouse wheel like a trackpad",
                     isOn: $settings.smoothScrolling)
+                FeatureRow(
+                    icon: "computermouse.fill",
+                    title: "Mouse Buttons",
+                    subtitle: "Remap the side (thumb) buttons",
+                    isOn: $settings.mouseButtons)
+                // Always rendered (dimmed when off) so toggling never resizes
+                // the popover — a resize makes it jump away from the menu bar.
+                VStack(spacing: 8) {
+                    ButtonMapRow(label: "Back button", selection: $settings.backButtonAction)
+                    ButtonMapRow(label: "Forward button", selection: $settings.forwardButtonAction)
+                }
+                .padding(.leading, 33)
+                .disabled(!settings.mouseButtons)
+                .opacity(settings.mouseButtons ? 1 : 0.4)
             }
             .padding(14)
             Divider()
@@ -91,6 +105,27 @@ struct MenuView: View {
     private func openAccessibilitySettings() {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
         NSWorkspace.shared.open(url)
+    }
+}
+
+struct ButtonMapRow: View {
+    let label: String
+    @Binding var selection: ButtonAction
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(label).font(.system(size: 12)).foregroundColor(.secondary)
+            Spacer()
+            Picker("", selection: $selection) {
+                ForEach(ButtonAction.allCases) { action in
+                    Text(action.title).tag(action)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .controlSize(.small)
+            .fixedSize()
+        }
     }
 }
 
