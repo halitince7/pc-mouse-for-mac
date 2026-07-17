@@ -24,9 +24,12 @@ The old version shipped two separate binaries, each needing its own Accessibilit
 - ✅ **No sudo** — installs to `~/Applications`, not `/usr/local/bin`.
 - ✅ **Code-signed bundle** with a stable identifier, so the permission survives rebuilds.
 
-## Install
+## Requirements
 
-Requires the Swift toolchain (`xcode-select --install`).
+- macOS 11 (Big Sur) or later
+- Swift toolchain — `xcode-select --install` (no full Xcode required)
+
+## Install
 
 ```bash
 git clone https://github.com/halitince7/mac-utilities.git
@@ -84,6 +87,20 @@ assets/                             # icon source (make-icon.swift) + AppIcon.ic
 All Swift files compile together via `swiftc` (no Xcode project needed) — the
 build script globs `src/**/*.swift`. Add a new feature as a small type under
 `src/Core/` and dispatch to it from `EventTapEngine`.
+
+## Development
+
+After editing any source file, just rebuild:
+
+```bash
+bash scripts/build-app.sh
+```
+
+It recompiles, re-signs with the same **stable identity**, reinstalls to
+`~/Applications`, and restarts the login agent. Because the signing identity is
+unchanged, the Accessibility permission carries over — **no re-granting between
+rebuilds**. Toggling a feature at runtime takes effect immediately (no rebuild
+needed) via the menu-bar panel.
 
 ## Distribution (notarized DMG)
 
