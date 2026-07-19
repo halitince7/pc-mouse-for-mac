@@ -2,11 +2,22 @@
 
 // Generates the MacUtilities app icon (1024x1024 PNG).
 // Usage: swift make-icon.swift <output.png>
+//
+// Design: a clean white mouse glyph flanked by left/right chevrons (desktop
+// switching) on a graphite squircle with a subtle same-hue vertical gradient
+// (light top -> deeper bottom), Apple-style.
 
 import Cocoa
 
 let outPath = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "icon.png"
 let size = 1024.0
+
+func hex(_ s: String) -> NSColor {
+    var h = UInt64(); Scanner(string: s).scanHexInt64(&h)
+    return NSColor(calibratedRed: CGFloat((h >> 16) & 0xff) / 255,
+                   green: CGFloat((h >> 8) & 0xff) / 255,
+                   blue: CGFloat(h & 0xff) / 255, alpha: 1)
+}
 
 let image = NSImage(size: NSSize(width: size, height: size))
 image.lockFocus()
@@ -14,38 +25,36 @@ guard let ctx = NSGraphicsContext.current?.cgContext else {
     fputs("no context\n", stderr); exit(1)
 }
 
-// Background: rounded square + diagonal gradient (purple -> blue)
+// Background: rounded square (squircle) clip + subtle vertical graphite gradient
 let inset = 80.0
 let rect = CGRect(x: inset, y: inset, width: size - 2*inset, height: size - 2*inset)
-let radius = 200.0
-let bgPath = NSBezierPath(roundedRect: NSRectFromCGRect(rect), xRadius: radius, yRadius: radius)
-bgPath.addClip()
+let bg = NSBezierPath(roundedRect: NSRectFromCGRect(rect), xRadius: 210, yRadius: 210)
+bg.addClip()
 
-let colors = [NSColor(calibratedRed: 0.42, green: 0.28, blue: 0.92, alpha: 1).cgColor,
-              NSColor(calibratedRed: 0.20, green: 0.55, blue: 0.98, alpha: 1).cgColor] as CFArray
 let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
-                          colors: colors, locations: [0, 1])!
+                          colors: [hex("3A3F4B").cgColor, hex("1C1F26").cgColor] as CFArray,
+                          locations: [0, 1])!
 ctx.drawLinearGradient(gradient,
-                       start: CGPoint(x: 0, y: size),
-                       end: CGPoint(x: size, y: 0),
+                       start: CGPoint(x: size/2, y: size),
+                       end: CGPoint(x: size/2, y: 0),
                        options: [])
 
-// Center: mouse + left/right arrows (desktop switching + scroll)
+// Center: white mouse glyph + left/right chevrons
 let cx = size / 2, cy = size / 2
-let white = NSColor.white
+let glyph = NSColor.white
 
 // Mouse body (rounded vertical capsule)
-let bodyW = 260.0, bodyH = 400.0
+let bodyW = 250.0, bodyH = 390.0
 let body = NSBezierPath(roundedRect: NSRect(x: cx - bodyW/2, y: cy - bodyH/2, width: bodyW, height: bodyH),
                         xRadius: bodyW/2, yRadius: bodyW/2)
-white.withAlphaComponent(0.95).setStroke()
+glyph.setStroke()
 body.lineWidth = 34
 body.stroke()
 
 // Scroll wheel (small vertical line near the top)
 let wheel = NSBezierPath(roundedRect: NSRect(x: cx - 14, y: cy + 40, width: 28, height: 110),
                          xRadius: 14, yRadius: 14)
-white.withAlphaComponent(0.95).setFill()
+glyph.setFill()
 wheel.fill()
 
 // Left / right chevron arrows (desktop switching)
@@ -57,7 +66,7 @@ func chevron(atX x: Double, pointingLeft: Bool) {
     p.move(to: NSPoint(x: back, y: cy + h/2))
     p.line(to: NSPoint(x: tip, y: cy))
     p.line(to: NSPoint(x: back, y: cy - h/2))
-    white.withAlphaComponent(0.95).setStroke()
+    glyph.setStroke()
     p.lineWidth = 44
     p.lineCapStyle = .round
     p.lineJoinStyle = .round
