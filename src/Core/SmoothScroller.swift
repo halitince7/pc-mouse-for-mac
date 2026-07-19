@@ -4,15 +4,18 @@ import CoreVideo
 /// Turns a notched mouse wheel's chunky, line-by-line jumps into an animated,
 /// pixel-based glide — much closer to a trackpad's smoothness.
 ///
-/// Fluidity comes from three things:
+/// Fluidity comes from five things:
 ///   1. A CVDisplayLink drives updates in sync with the display refresh (VSync),
 ///      so there's no timer jitter.
 ///   2. A time-constant ease-out (framerate-independent) gives a natural glide.
 ///   3. Sub-pixel carry keeps slow, tail-end motion perfectly smooth.
+///   4. Acceleration: spinning faster travels disproportionately farther.
+///   5. Momentum: after a genuine spin, the scroll coasts and settles under a
+///      drag curve, the way a trackpad does after a flick.
 ///
-/// Note: this is animated *smoothing*, not trackpad *momentum*. A wheel has no
-/// "release" gesture, so there's no inertial flick — each notch glides and
-/// settles; rapid notches accumulate into a longer glide.
+/// Slow, deliberate scrolling stays 1:1 and never coasts, and any new notch (or
+/// a flick the other way) cancels the glide immediately, so control is never
+/// taken away from the user.
 final class SmoothScroller {
     // Tag posted events so our own tap skips them (prevents infinite recursion).
     static let syntheticTag: Int64 = 0x5343524C // "SCRL"

@@ -12,7 +12,7 @@
 |---|---|
 | **Desktop Switcher** | Switch between desktops with **Ctrl + Scroll Wheel** — perfect for a traditional PC mouse. |
 | **ScrollFix** | Independent scroll directions: the mouse scrolls traditionally while the trackpad stays natural — **works no matter how your system Natural Scrolling is set**. |
-| **Smooth Scrolling** | Turns the mouse wheel's chunky, line-by-line jumps into an animated pixel glide — much closer to a trackpad. |
+| **Smooth Scrolling** | Turns the wheel's chunky, line-by-line jumps into a display-synced pixel glide, with speed-based acceleration and a trackpad-style coast after a flick. |
 | **Mouse Buttons** | Remap the side (thumb) buttons to Desktop Left/Right, Mission Control, or App Windows — remapping macOS doesn't offer natively. |
 
 Toggle each feature on/off from the **menu bar** icon. Everything runs inside **one** background app (`PCMouseForMac.app`); adding a new feature later needs **no new permission** — it's all one process.
@@ -72,9 +72,11 @@ feature, see the permission status, and quit from there.
 - **Scroll direction:** your mouse scrolls the traditional way while the trackpad
   stays natural. This holds whether macOS *Natural Scrolling* is ON or OFF — the
   app reads the system setting and adjusts automatically.
-- **Smooth scrolling:** each wheel notch glides instead of jumping. Note this is
-  animated smoothing, not trackpad momentum — a wheel has no "release" gesture,
-  so there's no inertial flick; rapid notches just accumulate into a longer glide.
+- **Smooth scrolling:** each wheel notch glides instead of jumping, in sync with
+  your display's refresh rate. Spin faster and it travels proportionally farther;
+  spin hard and let go and it coasts to a stop like a trackpad flick. Slow,
+  deliberate scrolling stays 1:1 and never coasts. Touching the wheel — or
+  flicking the other way — stops the glide immediately.
 - **Horizontal scroll:** hold **Shift** and use the wheel to scroll sideways —
   this keeps working (and stays smooth) with Smooth Scrolling enabled.
 - **Mouse buttons:** enable *Mouse Buttons*, then pick an action for the back and
@@ -100,7 +102,7 @@ src/
   Core/AppSettings.swift            # persisted feature toggles
   Core/PermissionMonitor.swift      # Accessibility trust state (drives UI)
   Core/ScrollDirectionMonitor.swift # reads the system Natural Scrolling setting
-  Core/SmoothScroller.swift         # animated pixel-glide for the mouse wheel
+  Core/SmoothScroller.swift         # pixel glide, acceleration and momentum
   Core/ButtonAction.swift           # actions a remapped mouse button can trigger
   Core/EventTapEngine.swift         # the CGEvent tap + feature logic
   App/AppDelegate.swift             # menu bar item, popover, single instance
