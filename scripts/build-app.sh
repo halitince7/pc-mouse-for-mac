@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# MacUtilities — build, sign, and install the unified background app.
+# PC Mouse for Mac — build, sign, and install the unified background app.
 # Single binary, single permission (Accessibility). No sudo required.
 
 set -e
 
-APP_NAME="MacUtilities"
-BUNDLE_ID="com.mathatinlabs.macutilities"
+APP_NAME="PCMouseForMac"
+BUNDLE_ID="com.mathatinlabs.pcmouseformac"
 VERSION="1.0"
 
 # Locate the source directory (repo root)
@@ -31,12 +31,12 @@ warn()  { echo -e "${YEL}⚠ $1${NC}"; }
 
 # --- Uninstall ---
 if [[ "$1" == "uninstall" || "$1" == "--uninstall" ]]; then
-    info "Uninstalling MacUtilities..."
+    info "Uninstalling PC Mouse for Mac..."
     launchctl unload "$PLIST" 2>/dev/null || true
     rm -f "$PLIST"          && ok "Removed launch agent"
     rm -rf "$INSTALLED_APP" && ok "Removed $INSTALLED_APP"
     echo
-    info "Also remove 'MacUtilities' from:"
+    info "Also remove 'PC Mouse for Mac' from:"
     echo "  System Settings → Privacy & Security → Accessibility"
     exit 0
 fi
@@ -71,7 +71,7 @@ cat > "$APP_DIR/Contents/Info.plist" << EOL
     <key>CFBundleExecutable</key><string>$APP_NAME</string>
     <key>CFBundleIdentifier</key><string>$BUNDLE_ID</string>
     <key>CFBundleName</key><string>$APP_NAME</string>
-    <key>CFBundleDisplayName</key><string>Mac Utilities</string>
+    <key>CFBundleDisplayName</key><string>PC Mouse for Mac</string>
     <key>CFBundleVersion</key><string>$VERSION</string>
     <key>CFBundleShortVersionString</key><string>$VERSION</string>
     <key>CFBundlePackageType</key><string>APPL</string>
@@ -96,7 +96,7 @@ if [[ -n "$MU_SIGN_IDENTITY" ]]; then
         --sign "$MU_SIGN_IDENTITY" --identifier "$BUNDLE_ID" "$APP_DIR" \
         && ok "Signed (Developer ID)" || { warn "Developer ID signing failed"; exit 1; }
 else
-    SIGN_IDENTITY="MacUtilities Self-Signed"
+    SIGN_IDENTITY="PCMouseForMac Self-Signed"
     if ! security find-identity 2>/dev/null | grep -q "$SIGN_IDENTITY"; then
         info "Setting up stable signing identity (first run)..."
         bash "$SCRIPT_DIR/setup-signing.sh" || warn "Could not create signing identity — using ad-hoc"
@@ -152,6 +152,6 @@ echo
 ok "Done!"
 echo
 info "Final step — grant ONE permission:"
-echo "  System Settings → Privacy & Security → Accessibility → enable MacUtilities"
+echo "  System Settings → Privacy & Security → Accessibility → enable PC Mouse for Mac"
 echo
 info "It activates automatically the moment you grant access (no need to relaunch the app)."

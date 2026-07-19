@@ -1,6 +1,6 @@
 #!/usr/bin/swift
 
-// Generates the MacUtilities app icon (1024x1024 PNG).
+// Generates the PC Mouse for Mac app icon (1024x1024 PNG).
 // Usage: swift make-icon.swift <output.png>
 //
 // Design: a clean white mouse glyph flanked by left/right chevrons (desktop

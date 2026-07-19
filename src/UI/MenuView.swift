@@ -58,7 +58,7 @@ struct MenuView: View {
                 .resizable()
                 .frame(width: 34, height: 34)
             VStack(alignment: .leading, spacing: 1) {
-                Text("Mac Utilities").font(.system(size: 14, weight: .semibold))
+                Text("PC Mouse for Mac").font(.system(size: 14, weight: .semibold))
                 Text("Version \(Const.version)")
                     .font(.system(size: 11)).foregroundColor(.secondary)
             }
@@ -74,7 +74,7 @@ struct MenuView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Accessibility permission needed")
                     .font(.system(size: 12, weight: .medium))
-                Text("Enable Mac Utilities to activate the features.")
+                Text("Enable PC Mouse for Mac to activate the features.")
                     .font(.system(size: 11)).foregroundColor(.secondary)
             }
             Spacer()

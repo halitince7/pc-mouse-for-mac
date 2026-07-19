@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PC Mouse for Mac — make a regular mouse feel at home on macOS</title>
+<meta name="description" content="A tiny free menu bar app that makes a regular PC mouse feel at home on a Mac: desktop switching, sane scroll direction, trackpad-like smooth scrolling, and side-button remapping. One permission, open source." />
+<meta property="og:title" content="PC Mouse for Mac" />
+<meta property="og:description" content="Desktop switching, sane scroll direction, trackpad-like smooth scrolling, and side-button remapping — one lightweight menu bar app, one permission." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="icon.png" />
+<link rel="icon" href="icon.png" />
+<style>
+  :root{
+    --bg:#ffffff; --fg:#12141a; --muted:#5b6472; --card:#f6f7f9;
+    --line:#e4e7ec; --accent:#2b3040; --accent-fg:#ffffff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0f1115; --fg:#e9ecf1; --muted:#9aa3b2; --card:#171a21;
+           --line:#252a34; --accent:#e9ecf1; --accent-fg:#12141a; }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  header{text-align:center;padding:80px 0 56px}
+  header img{width:112px;height:112px;border-radius:24px;display:block;margin:0 auto 22px}
+  h1{font-size:clamp(32px,6vw,44px);line-height:1.15;margin:0 0 14px;letter-spacing:-.02em}
+  .tag{font-size:clamp(16px,2.6vw,19px);color:var(--muted);margin:0 auto 30px;max-width:30em}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    display:inline-block;padding:12px 22px;border-radius:10px;text-decoration:none;
+    font-weight:600;font-size:15px;border:1px solid var(--line);color:var(--fg);
+  }
+  .btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+  .note{font-size:13px;color:var(--muted);margin-top:14px}
+  section{padding:40px 0;border-top:1px solid var(--line)}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 22px;font-weight:600}
+  .feat{display:grid;gap:18px}
+  @media(min-width:620px){.feat{grid-template-columns:1fr 1fr;gap:20px}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .card h3{margin:0 0 6px;font-size:16px}
+  .card p{margin:0;color:var(--muted);font-size:14.5px}
+  pre{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;overflow-x:auto;font-size:13.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  ol{padding-left:20px} ol li{margin:8px 0}
+  footer{padding:40px 0 64px;text-align:center;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+  footer a{color:var(--muted)}
+  a{color:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img src="icon.png" alt="PC Mouse for Mac icon" />
+    <h1>PC Mouse for Mac</h1>
+    <p class="tag">macOS treats a regular mouse like an afterthought. This tiny menu bar app fixes that — scroll, desktop switching, and side buttons that finally behave.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/halitince7/pc-mouse-for-mac">Get it on GitHub</a>
+      <a class="btn" href="https://github.com/halitince7/pc-mouse-for-mac#install">Install guide</a>
+    </div>
+    <p class="note">Free and open source (MIT) · macOS 11+ · one permission</p>
+  </header>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="feat">
+      <div class="card">
+        <h3>Smooth Scrolling</h3>
+        <p>Turns the wheel's chunky, line-by-line jumps into a display-synced pixel glide — close to a trackpad.</p>
+      </div>
+      <div class="card">
+        <h3>ScrollFix</h3>
+        <p>Mouse scrolls traditionally while the trackpad stays natural — no matter how your system setting is configured.</p>
+      </div>
+      <div class="card">
+        <h3>Desktop Switcher</h3>
+        <p>Hold Ctrl and scroll to move between desktops. No trackpad gesture required.</p>
+      </div>
+      <div class="card">
+        <h3>Mouse Buttons</h3>
+        <p>Remap the side (thumb) buttons to switch desktops, open Mission Control, and more.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Install</h2>
+    <pre>git clone https://github.com/halitince7/pc-mouse-for-mac.git
+cd pc-mouse-for-mac
+bash scripts/build-app.sh</pre>
+    <ol>
+      <li>Needs the Swift toolchain — <code>xcode-select --install</code>.</li>
+      <li>Grant <strong>one</strong> permission: System Settings → Privacy &amp; Security → Accessibility → enable <strong>PC Mouse for Mac</strong>.</li>
+      <li>That's it. It starts on login and lives in the menu bar.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Built to stay simple</h2>
+    <p style="color:var(--muted);margin:0">
+      Every feature is a single on/off toggle in the menu bar — no config screens,
+      no per-app rules, no gesture editors. Everything runs in one process and
+      reuses one Accessibility grant, so new features never ask for more.
+    </p>
+  </section>
+
+  <footer>
+    <a href="https://github.com/halitince7/pc-mouse-for-mac">GitHub</a> ·
+    <a href="https://github.com/halitince7/pc-mouse-for-mac/blob/main/ROADMAP.md">Roadmap</a> ·
+    <a href="https://github.com/halitince7/pc-mouse-for-mac/blob/main/LICENSE">MIT License</a>
+    <p style="margin-top:14px">Made by mathatinLabs</p>
+  </footer>
+
+</div>
+</body>
+</html>

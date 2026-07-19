@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Creates a stable, self-signed code-signing identity for MacUtilities.
+# Creates a stable, self-signed code-signing identity for PC Mouse for Mac.
 #
 # Why: ad-hoc signing gives the app a new code identity on every rebuild, which
 # makes macOS invalidate the Accessibility (TCC) permission each time. A stable
@@ -13,8 +13,8 @@
 
 set -e
 
-IDENTITY="MacUtilities Self-Signed"
-KEYCHAIN="$HOME/Library/Keychains/macutil-signing.keychain-db"
+IDENTITY="PCMouseForMac Self-Signed"
+KEYCHAIN="$HOME/Library/Keychains/pcmouse-signing.keychain-db"
 KC_PASS="macutil"          # password for the dedicated signing keychain
 P12_PASS="macutil-p12"
 
@@ -56,7 +56,7 @@ while IFS= read -r line; do
     kc="$(echo "$line" | tr -d '"' | xargs)"
     [[ -n "$kc" ]] && CURRENT+=("$kc")
 done < <(security list-keychains -d user)
-if ! printf '%s\n' "${CURRENT[@]}" | grep -q "macutil-signing"; then
+if ! printf '%s\n' "${CURRENT[@]}" | grep -q "pcmouse-signing"; then
     security list-keychains -d user -s "${CURRENT[@]}" "$KEYCHAIN" >/dev/null 2>&1
 fi
 

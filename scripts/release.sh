@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MacUtilities — build a distributable, notarized DMG.
+# PC Mouse for Mac — build a distributable, notarized DMG.
 #
 # This is a SKELETON: it requires a paid Apple Developer account and a
 # "Developer ID Application" certificate installed in your keychain. Local
@@ -13,21 +13,21 @@
 #   3. Create an app-specific password at https://appleid.apple.com → Sign-In
 #      & Security → App-Specific Passwords.
 #   4. Store notarization credentials once as a reusable profile:
-#        xcrun notarytool store-credentials "MacUtilities-Notary" \
+#        xcrun notarytool store-credentials "PCMouseForMac-Notary" \
 #            --apple-id "you@example.com" \
 #            --team-id  "YOURTEAMID" \
 #            --password "xxxx-xxxx-xxxx-xxxx"
 #
 # ── Usage ───────────────────────────────────────────────────────────────────
 #   DEVELOPER_ID="Developer ID Application: Your Name (TEAMID)" \
-#   NOTARY_PROFILE="MacUtilities-Notary" \
+#   NOTARY_PROFILE="PCMouseForMac-Notary" \
 #   bash scripts/release.sh
 #
-# Result: dist/MacUtilities-<version>.dmg (signed, notarized, stapled).
+# Result: dist/PCMouseForMac-<version>.dmg (signed, notarized, stapled).
 
 set -e
 
-APP_NAME="MacUtilities"
+APP_NAME="PCMouseForMac"
 VERSION="1.0"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -84,5 +84,5 @@ xcrun stapler validate "$DMG_PATH" && ok "Stapled and validated"
 rm -rf "$STAGE_DIR"
 echo
 ok "Release ready: $DMG_PATH"
-info "Users can now download it, drag MacUtilities to Applications, and open it"
+info "Users can now download it, drag PC Mouse for Mac to Applications, and open it"
 info "with no Gatekeeper warning."

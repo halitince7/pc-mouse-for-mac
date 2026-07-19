@@ -60,7 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private static func statusBarIcon() -> NSImage {
         let candidates = ["computermouse", "cursorarrow.click.2", "arrow.up.arrow.down"]
         for name in candidates {
-            if let img = NSImage(systemSymbolName: name, accessibilityDescription: "Mac Utilities") {
+            if let img = NSImage(systemSymbolName: name, accessibilityDescription: "PC Mouse for Mac") {
                 img.isTemplate = true
                 return img
             }

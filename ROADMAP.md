@@ -1,6 +1,6 @@
 # Roadmap
 
-Mac Utilities aims to stay **small, opinionated, and effortless** — the opposite
+PC Mouse for Mac aims to stay **small, opinionated, and effortless** — the opposite
 of a power-user tool you have to configure for an afternoon.
 
 ## Design principles

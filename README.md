@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/icon-1024.png" width="128" alt="Mac Utilities icon" />
-  <h1>Mac Utilities</h1>
-  <p>A single lightweight macOS background app that bundles handy mouse & desktop tweaks — with <b>one</b> permission for all of them.</p>
+  <img src="assets/icon-1024.png" width="128" alt="PC Mouse for Mac icon" />
+  <h1>PC Mouse for Mac</h1>
+  <p>Make a regular PC mouse feel at home on a Mac — desktop switching, sane scroll direction, trackpad-like smooth scrolling, and side-button remapping. One lightweight menu bar app, <b>one</b> permission.</p>
 </div>
 
 ---
@@ -15,7 +15,7 @@
 | **Smooth Scrolling** | Turns the mouse wheel's chunky, line-by-line jumps into an animated pixel glide — much closer to a trackpad. |
 | **Mouse Buttons** | Remap the side (thumb) buttons to Desktop Left/Right, Mission Control, or App Windows — remapping macOS doesn't offer natively. |
 
-Toggle each feature on/off from the **menu bar** icon. Everything runs inside **one** background app (`MacUtilities.app`); adding a new feature later needs **no new permission** — it's all one process.
+Toggle each feature on/off from the **menu bar** icon. Everything runs inside **one** background app (`PCMouseForMac.app`); adding a new feature later needs **no new permission** — it's all one process.
 
 ## Why one app?
 
@@ -39,17 +39,17 @@ cd pc-mouse-for-mac
 bash scripts/build-app.sh
 ```
 
-This compiles, signs, installs `MacUtilities.app` to `~/Applications`, and starts it as a login agent. On the first run it also creates a **stable, per-machine self-signed signing identity** (via `scripts/setup-signing.sh`) so the Accessibility permission you grant survives every future rebuild — no re-granting.
+This compiles, signs, installs `PCMouseForMac.app` to `~/Applications`, and starts it as a login agent. On the first run it also creates a **stable, per-machine self-signed signing identity** (via `scripts/setup-signing.sh`) so the Accessibility permission you grant survives every future rebuild — no re-granting.
 
 **Final step — grant one permission:**
 
-> **System Settings → Privacy & Security → Accessibility → enable `MacUtilities`**
+> **System Settings → Privacy & Security → Accessibility → enable `PC Mouse for Mac`**
 
 It starts working immediately after you flip the switch. It also launches automatically on every login.
 
 ## Control panel
 
-Mac Utilities lives in the **menu bar** (no Dock icon, no window clutter). Click
+PC Mouse for Mac lives in the **menu bar** (no Dock icon, no window clutter). Click
 the mouse icon to open a small, modern SwiftUI panel:
 
 - **Header** — app icon, name, and version.
@@ -80,7 +80,7 @@ feature, see the permission status, and quit from there.
 - **Mouse buttons:** enable *Mouse Buttons*, then pick an action for the back and
   forward (thumb) buttons. Set a button to **None** to leave it untouched — the
   system default (e.g. browser back/forward) keeps working.
-- Clicking `MacUtilities.app` again (from Finder / Launchpad) just re-opens the
+- Clicking `PCMouseForMac.app` again (from Finder / Launchpad) just re-opens the
   menu-bar panel; it never launches a second copy.
 
 ## Uninstall
@@ -89,7 +89,7 @@ feature, see the permission status, and quit from there.
 bash scripts/build-app.sh uninstall
 ```
 
-Then remove `MacUtilities` from **System Settings → Privacy & Security → Accessibility**.
+Then remove `PC Mouse for Mac` from **System Settings → Privacy & Security → Accessibility**.
 
 ## Project layout
 
@@ -143,7 +143,7 @@ with Apple, and staples the ticket:
 
 ```bash
 DEVELOPER_ID="Developer ID Application: Your Name (TEAMID)" \
-NOTARY_PROFILE="MacUtilities-Notary" \
+NOTARY_PROFILE="PCMouseForMac-Notary" \
 bash scripts/release.sh
 ```
 
