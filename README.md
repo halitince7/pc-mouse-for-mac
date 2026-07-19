@@ -34,8 +34,8 @@ The old version shipped two separate binaries, each needing its own Accessibilit
 ## Install
 
 ```bash
-git clone https://github.com/halitince7/mac-utilities.git
-cd mac-utilities
+git clone https://github.com/halitince7/pc-mouse-for-mac.git
+cd pc-mouse-for-mac
 bash scripts/build-app.sh
 ```
 
