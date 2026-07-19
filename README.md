@@ -19,10 +19,12 @@ Toggle each feature on/off from the **menu bar** icon. Everything runs inside **
 
 ## Why one app?
 
-The old version shipped two separate binaries, each needing its own Accessibility grant, and the services could get stuck in a permission-prompt loop. The current design fixes both:
+Utilities like this usually ask for a permission per feature and leave you
+managing background services. This one is deliberately built as a single
+process:
 
-- ✅ **One permission** — a single **Accessibility** grant (no Input Monitoring needed).
-- ✅ **No prompt loop** — the app asks once, then waits quietly and activates the moment you grant access. No restart, no "stop the service first" dance.
+- ✅ **One permission** — a single **Accessibility** grant covers every feature, and new features never ask for more (no Input Monitoring needed).
+- ✅ **No prompt loop** — it asks once, then waits quietly and activates the moment you grant access. No restart, no "stop the service first" dance.
 - ✅ **No sudo** — installs to `~/Applications`, not `/usr/local/bin`.
 - ✅ **Code-signed bundle** with a stable identifier, so the permission survives rebuilds.
 
@@ -55,9 +57,12 @@ the mouse icon to open a small, modern SwiftUI panel:
 - **Header** — app icon, name, and version.
 - **Permission banner** — appears only when Accessibility isn't granted yet,
   with a one-click **Open** button that jumps straight to the right Settings pane.
-- **Feature rows** — one per feature (Desktop Switcher, ScrollFix), each with an
-  icon, a short description, and a **toggle switch**. Flipping a switch takes
-  effect instantly; your choices persist across restarts.
+- **Feature rows** — one per feature (Desktop Switcher, ScrollFix, Smooth
+  Scrolling, Mouse Buttons), each with an icon, a short description, and a
+  **toggle switch**. Flipping a switch takes effect instantly; your choices
+  persist across restarts.
+- **Button mapping** — under Mouse Buttons, a small picker for the back and
+  forward (thumb) buttons. Dimmed until you enable the feature.
 - **Footer** — a shortcut to the Accessibility settings and a **Quit** button.
 
 > 💡 The panel is only for control. The features keep working in the background

@@ -22,7 +22,7 @@ open-source alternative for the 90% case.
 
 - [x] **Desktop Switcher** — Ctrl + scroll to switch desktops
 - [x] **ScrollFix** — traditional mouse, natural trackpad (system-setting independent)
-- [x] **Smooth Scrolling** — VSync-driven pixel glide for the mouse wheel
+- [x] **Smooth Scrolling** — VSync-driven pixel glide, speed-based acceleration, and a trackpad-style momentum coast
 - [x] **Mouse Buttons** — remap the back/forward (thumb) buttons *(toggle + small action picker)*
 
 ## Planned — simple toggles
